@@ -68,15 +68,17 @@ io.sockets.on('connection', function (socket) {
 
         if (!(channel in channels)) {
             channels[channel] = {};
+            usersData[channel] = {};
         }
 
         for (id in channels[channel]) {
             channels[channel][id].emit('addPeer', {'peer_id': socket.id, 'should_create_offer': false, 'user_data': userdata});
-            socket.emit('addPeer', {'peer_id': id, 'should_create_offer': true, 'user_data': userdata});
+            socket.emit('addPeer', {'peer_id': id, 'should_create_offer': true, 'user_data': usersData[channel][id]});
         }
 
         channels[channel][socket.id] = socket;
         socket.channels[channel] = channel;
+        usersData[channel][socket.id] = userdata;
     });
 
     function part(channel) {
