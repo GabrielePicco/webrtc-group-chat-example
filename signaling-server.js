@@ -30,6 +30,7 @@ main.get('/', function(req, res){ res.sendFile(__dirname + '/client.html'); });
 /*** INTERESTING STUFF ***/
 /*************************/
 var channels = {};
+var usersData = {};
 var sockets = {};
 
 /**
