@@ -29,7 +29,8 @@ var channels = {};
 var usersData = {};
 var sockets = {};
 
-var syncTime = {};
+var exerciseSyncTime = {};
+var timerSyncTime = {};
 var syncMinDelay = 3000; // milliseconds
 
 /**
@@ -91,15 +92,36 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
-        if (!(channel in syncTime)) {
-            syncTime[channel] = 0;
+        if (!(channel in exerciseSyncTime)) {
+            exerciseSyncTime[channel] = 0;
         }
 
-        if(Date.now() - syncTime[channel] > syncMinDelay){
+        if(Date.now() - exerciseSyncTime[channel] > syncMinDelay){
             for (id in channels[channel]) {
-                if(id != socket.id) channels[channel][id].emit('sync', {'current_exercise': currentExercise});
+                if(id != socket.id) channels[channel][id].emit('syncPeerExercise', {'current_exercise': currentExercise});
             }
-            syncTime[channel] = Date.now();
+            exerciseSyncTime[channel] = Date.now();
+        }
+    });
+
+    socket.on('syncTimerEvent', function (config) {
+        console.log("["+ socket.id + "] syncTimerEvent ", config);
+        var channel = config.channel;
+
+        if (!channel in socket.channels) {
+            console.log("["+ socket.id + "] ERROR: not joined ", channel);
+            return;
+        }
+
+        if (!(channel in timerSyncTime)) {
+            timerSyncTime[channel] = 0;
+        }
+
+        if(Date.now() - timerSyncTime[channel] > syncMinDelay){
+            for (id in channels[channel]) {
+                if(id != socket.id) channels[channel][id].emit('syncPeerTimerEvent', {'state': true});
+            }
+            timerSyncTime[channel] = Date.now();
         }
     });
 
