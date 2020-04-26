@@ -92,7 +92,7 @@ io.sockets.on('connection', function (socket) {
         }
 
         if (!(channel in syncTime)) {
-            syncTime[channel] = Date.now();
+            syncTime[channel] = 0;
         }
 
         if(Date.now() - syncTime[channel] > syncMinDelay){
