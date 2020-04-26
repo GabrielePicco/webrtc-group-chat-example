@@ -25,13 +25,12 @@ main.get('/', function(req, res){ res.sendFile(__dirname + '/client.html'); });
 // main.get('/client.html', function(req, res){ res.sendfile('newclient.html'); });
 
 
-
-/*************************/
-/*** INTERESTING STUFF ***/
-/*************************/
 var channels = {};
 var usersData = {};
 var sockets = {};
+
+var syncTime = {};
+var syncMinDelay = 3000; // milliseconds
 
 /**
  * Users will connect to the signaling server, after which they'll issue a "join"
@@ -80,6 +79,28 @@ io.sockets.on('connection', function (socket) {
         channels[channel][socket.id] = socket;
         socket.channels[channel] = channel;
         usersData[channel][socket.id] = userdata;
+    });
+
+    socket.on('syncExercise', function (config) {
+        console.log("["+ socket.id + "] syncExercise ", config);
+        var channel = config.channel;
+        var currentExercise = config.currentExercise;
+
+        if (!channel in socket.channels) {
+            console.log("["+ socket.id + "] ERROR: not joined ", channel);
+            return;
+        }
+
+        if (!(channel in syncTime)) {
+            syncTime[channel] = Date.now();
+        }
+
+        if(Date.now() - syncTime[channel] > syncMinDelay){
+            for (id in channels[channel]) {
+                if(id != socket.id) channels[channel][id].emit('sync', {'current_exercise': currentExercise});
+            }
+            syncTime[channel] = Date.now();
+        }
     });
 
     function part(channel) {
