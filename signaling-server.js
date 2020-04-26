@@ -31,7 +31,7 @@ var sockets = {};
 
 var exerciseSyncTime = {};
 var timerSyncTime = {};
-var syncMinDelay = 3000; // milliseconds
+var syncMinDelay = 1500; // milliseconds
 
 /**
  * Users will connect to the signaling server, after which they'll issue a "join"
