@@ -31,7 +31,7 @@ var sockets = {};
 
 var exerciseSyncTime = {};
 var timerSyncTime = {};
-var syncMinDelay = 1500; // milliseconds
+var syncMinDelay = 1000; // milliseconds
 
 /**
  * Users will connect to the signaling server, after which they'll issue a "join"
@@ -98,7 +98,7 @@ io.sockets.on('connection', function (socket) {
 
         if(Date.now() - exerciseSyncTime[channel] > syncMinDelay){
             for (id in channels[channel]) {
-                if(id != socket.id) channels[channel][id].emit('syncPeerExercise', {'current_exercise': currentExercise});
+                channels[channel][id].emit('syncPeerExercise', {'current_exercise': currentExercise});
             }
             exerciseSyncTime[channel] = Date.now();
         }
