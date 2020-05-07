@@ -119,7 +119,7 @@ io.sockets.on('connection', function (socket) {
 
         if(Date.now() - timerSyncTime[channel] > syncMinDelay){
             for (id in channels[channel]) {
-                if(id != socket.id) channels[channel][id].emit('syncPeerTimerEvent', {'state': true});
+                channels[channel][id].emit('syncPeerTimerEvent', {'state': true});
             }
             timerSyncTime[channel] = Date.now();
         }
