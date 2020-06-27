@@ -2,7 +2,7 @@
 /*** CONFIG ***/
 /**************/
 
-PORT = 80;
+PORT = 8080;
 
 /*************/
 /*** SETUP ***/
@@ -15,7 +15,7 @@ var server = http.createServer(main)
 var io  = require('socket.io').listen(server);
 //io.set('log level', 2);
 
-server.listen(PORT, null, function() {
+server.listen(process.env.PORT || PORT, null, function() {
     console.log("Listening on port " + PORT);
 });
 //main.use(express.bodyParser());
@@ -31,7 +31,7 @@ var sockets = {};
 
 var exerciseSyncTime = {};
 var timerSyncTime = {};
-var syncMinDelay = 1000; // milliseconds
+var syncMinDelay = 500; // milliseconds
 
 /**
  * Users will connect to the signaling server, after which they'll issue a "join"
